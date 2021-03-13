@@ -5,7 +5,12 @@ import '@aws-cdk/assert/jest';
 test('create app', () => {
   const app = new cdk.App();
   const stack = new cdk.Stack(app);
-  new PetClinicConstruct(stack, 'PetClinicConstruct');
+  new PetClinicConstruct(stack, 'PetClinicConstruct', {
+    uiImage: '775492342640.dkr.ecr.us-west-2.amazonaws.com/petclinic-ui-eks:latest',
+    customerImage: '775492342640.dkr.ecr.us-west-2.amazonaws.com/petclinic-customer-eks:latest',
+    vetsImage: '775492342640.dkr.ecr.us-west-2.amazonaws.com/petclinic-vets-eks:latest',
+    visitsImage: '775492342640.dkr.ecr.us-west-2.amazonaws.com/petclinic-visits-eks:latest',
+  });
   expect(stack).toHaveResource('Custom::AWSCDK-EKS-KubernetesResource');
   expect(stack).toHaveResource('Custom::AWSCDKOpenIdConnectProvider');
   expect(stack).toHaveResource('AWS::IAM::Policy');

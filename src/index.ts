@@ -4,10 +4,26 @@ import * as iam from '@aws-cdk/aws-iam';
 import * as rds from '@aws-cdk/aws-rds';
 import * as cdk from '@aws-cdk/core';
 
+// Customizable construct inputs
+export interface IPetClinicConstruct {
+
+  // UI Image
+  readonly uiImage: string;
+
+  // Customer Image
+  readonly customerImage: string;
+
+  // Vets Images
+  readonly vetsImage: string;
+
+  // Visits Image
+  readonly visitsImage: string;
+}
+
 export class PetClinicConstruct extends cdk.Construct {
   readonly namespace: string = 'petclinic-namespace';
 
-  constructor(scope: cdk.Construct, id: string) {
+  constructor(scope: cdk.Construct, id: string, props: IPetClinicConstruct) {
     super(scope, id);
 
     // VPC
@@ -101,16 +117,16 @@ export class PetClinicConstruct extends cdk.Construct {
     const namespace = this.createNameSpace(cluster);
 
     // UI Service
-    this.createService(cluster, 'ui', db, '775492342640.dkr.ecr.us-west-2.amazonaws.com/petclinic-ui-eks:latest', namespace);
+    this.createService(cluster, 'ui', db, props.uiImage, namespace);
 
     // Customer service
-    this.createService(cluster, 'customer', db, '775492342640.dkr.ecr.us-west-2.amazonaws.com/petclinic-customer-eks:latest', namespace);
+    this.createService(cluster, 'customer', db, props.customerImage, namespace);
 
     // Vets service
-    this.createService(cluster, 'vets', db, '775492342640.dkr.ecr.us-west-2.amazonaws.com/petclinic-vets-eks:latest', namespace);
+    this.createService(cluster, 'vets', db, props.vetsImage, namespace);
 
     // Visits service
-    this.createService(cluster, 'visits', db, '775492342640.dkr.ecr.us-west-2.amazonaws.com/petclinic-visits-eks:latest', namespace);
+    this.createService(cluster, 'visits', db, props.visitsImage, namespace);
 
     // Create Ingress
     this.createIngress(cluster);

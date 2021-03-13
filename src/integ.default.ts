@@ -9,4 +9,9 @@ const env = {
 
 const stack = new cdk.Stack(app, 'petclinic-stack', { env });
 
-new PetClinicConstruct(stack, 'PetClinicCluster');
+new PetClinicConstruct(stack, 'PetClinicCluster', {
+  uiImage: '775492342640.dkr.ecr.us-west-2.amazonaws.com/petclinic-ui-eks:latest',
+  customerImage: '775492342640.dkr.ecr.us-west-2.amazonaws.com/petclinic-customer-eks:latest',
+  vetsImage: '775492342640.dkr.ecr.us-west-2.amazonaws.com/petclinic-vets-eks:latest',
+  visitsImage: '775492342640.dkr.ecr.us-west-2.amazonaws.com/petclinic-visits-eks:latest',
+});

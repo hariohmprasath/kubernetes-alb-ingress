@@ -200,7 +200,15 @@ $ cdk bootstrap \
     aws://<AWS Account Id>/<AWS_REGION>
 ```
 
-Run the following command to start the deployment
+Run the following command to start the deployment, the following parameters can be customized as part of the deployment
+
+| Parameter  | Description |
+| ------------- | ------------- |
+| uiImage | ECR UI Repository Image URI |
+| customerImage | ECR Customer Repository Image URI |
+| vetsImage | ECR Vets Repository Image URI |
+| visitsImage | ECR Visits Repository Image URI |
+
 
 ```bash
 cdk deploy --require-approval never
@@ -221,7 +229,7 @@ petclinic-stack.PetClinicClustereksclusterGetTokenCommand1EDA242A = aws eks get-
 petclinic-stack.PetClinicClustereksclusterMastersRoleArnA646E29D = arn:aws:iam::775492342640:role/petclinic-stack-PetClinicClustereksclusterMastersR-1X46FK3X4KKZ9
 
 Stack ARN:
-arn:aws:cloudformation:us-east-1:775492342640:stack/petclinic-stack/076e7950-82c9-11eb-bb21-12d806c7dd7d
+arn:aws:cloudformation:us-east-1:${aws-account-id}:stack/petclinic-stack/076e7950-82c9-11eb-bb21-12d806c7dd7d
 ```
 
 > Note: The output will contain the `update-kubeconfig` command that needs to get executed in the command prompt in order to switch kubernetes context to this newly created EKS cluster.
