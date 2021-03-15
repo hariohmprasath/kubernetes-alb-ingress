@@ -248,7 +248,23 @@ CDK construct will take care of the following:
 
     ![loadbalancer](images/Loadbalancer.png)
 
-3. Get the `DNS name` and use a web client like CURL or POSTMAN to send the following request
+3. Click on the load balancer, naviate to "Listeners" tab (bottom section) and click on "View/edit rules". Load balancer should the following rules registered
+
+    ![rules](images/rules.png)
+
+    > Note: If you dont see these rules registered run the following command under the root directory. It will create the load balancer with the ingress rules
+
+    ```bash
+    kubectl replace --force -f k8s/ingress-k8s.yaml
+    ```
+
+    **Output**
+    ```bash
+    ingress.extensions "petclinic-ingress" deleted
+    ingress.extensions/petclinic-ingress replaced
+    ```
+
+4. Get the `DNS name` and use a web client like CURL or POSTMAN to send the following request
 
     ```bash
     POST: http://<<DNS name>>/owners/boostrap
@@ -318,7 +334,6 @@ ustereksclusterchartalbingresscontrollerchartdc1a7bff-aws-load   1/1     1      
 Open the web browser and navigate to `http://${DNS name}` URL, you should be able to see the petclinic application. The web page will look like below:
 
 ![homepage](images/Homepage.png)
-
 
 # Cleanup
 

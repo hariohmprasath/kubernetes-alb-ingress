@@ -117,19 +117,20 @@ export class PetClinicConstruct extends cdk.Construct {
     const namespace = this.createNameSpace(cluster);
 
     // UI Service
-    this.createService(cluster, 'ui', db, props.uiImage, namespace);
+    const uiService = this.createService(cluster, 'ui', db, props.uiImage, namespace);
 
     // Customer service
-    this.createService(cluster, 'customer', db, props.customerImage, namespace);
+    const customerService = this.createService(cluster, 'customer', db, props.customerImage, namespace);
 
     // Vets service
-    this.createService(cluster, 'vets', db, props.vetsImage, namespace);
+    const vetsService = this.createService(cluster, 'vets', db, props.vetsImage, namespace);
 
     // Visits service
-    this.createService(cluster, 'visits', db, props.visitsImage, namespace);
+    const visitService = this.createService(cluster, 'visits', db, props.visitsImage, namespace);
 
     // Create Ingress
-    this.createIngress(cluster);
+    const dependencies = [namespace, uiService, customerService, vetsService, visitService];
+    this.createIngress(cluster, dependencies);
   }
 
   /*
@@ -354,12 +355,12 @@ export class PetClinicConstruct extends cdk.Construct {
   }
 
   // Create ingress with path based routing
-  createIngress(cluster: eks.Cluster) {
-    cluster.addManifest('petclinic-ingress', {
+  createIngress(cluster: eks.Cluster, dependencies: eks.KubernetesManifest[]) {
+    const ingress = cluster.addManifest('petclinic-ingress', {
       apiVersion: 'extensions/v1beta1',
       kind: 'Ingress',
       metadata: {
-        namespace: 'petclinic-namespace',
+        namespace: this.namespace,
         name: 'petclinic-ingress',
         annotations: {
           'kubernetes.io/ingress.class': 'alb',
@@ -409,6 +410,10 @@ export class PetClinicConstruct extends cdk.Construct {
         ],
       },
     });
+
+    dependencies.forEach(function(x) {
+      ingress.node.addDependency(x);
+    });
   }
 
   // Create deployment and service
@@ -416,8 +421,9 @@ export class PetClinicConstruct extends cdk.Construct {
     cluster: eks.Cluster,
     suffix: string,
     db: rds.ServerlessCluster,
-    image: string, namespace: eks.KubernetesManifest,
-  ) : void {
+    image: string,
+    namespace: eks.KubernetesManifest,
+  ) : eks.KubernetesManifest {
 
     // K8s Deployment
     const deployment = cluster.addManifest('deployment-' + suffix, {
@@ -500,5 +506,8 @@ export class PetClinicConstruct extends cdk.Construct {
 
     // Dependency
     service.node.addDependency(namespace);
+    service.node.addDependency(deployment);
+
+    return service;
   }
 }

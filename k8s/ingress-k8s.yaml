@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  namespace: petclinic-namespace
+  name: petclinic-ingress
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/healthcheck-port: "80"
+    alb.ingress.kubernetes.io/healthcheck-path: "/actuator/health"
+    alb.ingress.kubernetes.io/healthcheck-protocol: "HTTP"
+    alb.ingress.kubernetes.io/target-type: "ip"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /owner*
+            backend:
+              serviceName: petclinic-customer-service
+              servicePort: 80
+          - path: /vet*
+            backend:
+              serviceName: petclinic-vets-service
+              servicePort: 80
+          - path: /visit*
+            backend:
+              serviceName: petclinic-visits-service
+              servicePort: 80
+          - path: /*
+            backend:
+              serviceName: petclinic-ui-service
+              servicePort: 80
