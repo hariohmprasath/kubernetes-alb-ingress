@@ -244,15 +244,19 @@ CDK construct will take care of the following:
 
 1. Setup kubernetes context - Open terminal or powershell and run the `update-config` command available in the CDK output to set the kubernetes context.
 
-2. Get the load balancer URL - Login to AWS console and navigate to EC2 -> Load balancer. You should be able to see a load balancer created with the prefix k8s-petclinic*, like below:
+2. Run the following `kubectl` command to get the load balancer URL from `ADDRESS` column in the output
 
-    ![loadbalancer](images/Loadbalancer.png)
+    ```bash
+    kubectl get ingress petclinic-ingress -n petclinic-namespace
+    ```
 
-3. Click on the load balancer, naviate to "Listeners" tab (bottom section) and click on "View/edit rules". Load balancer should the following rules registered
+    **Output**
+    ```bash
+    NAME                CLASS    HOSTS   ADDRESS                                                                   PORTS   AGE
+    petclinic-ingress   <none>   *       k8s-petclini-petclini-5f4a9b6bb4-1272986322.us-east-1.elb.amazonaws.com   80      23s
+    ```
 
-    ![rules](images/rules.png)
-
-    > Note: If you dont see these rules registered run the following command under the root directory. It will create the load balancer with the ingress rules
+3. If the `ADDRESS` column is empty then run the following command under the root directory to recreate ingress with the routing rules
 
     ```bash
     kubectl replace --force -f k8s/ingress-k8s.yaml
